@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -53,14 +54,15 @@ public class GroupController {
 
 	@GetMapping("/groups")
 	Collection<Group> groups() {
-		return groupRepository.findAll();
+		List<Group> list = groupRepository.findAll();
+		return list;
 	}
 
 	@GetMapping("/group/{id}")
-	ResponseEntity<?> getGroup(@PathVariable BigInteger id) {
-		Optional<Group> group = groupRepository.findById(id);
+	ResponseEntity<Group> getGroup(@PathVariable Long id) {
+		Optional<Group> group = groupRepository.findById(BigInteger.valueOf(id));
 		return group.map(response -> ResponseEntity.ok().body(response))
-				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+				.orElse(new ResponseEntity<Group>(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping("/group")
@@ -71,17 +73,17 @@ public class GroupController {
 	}
 
 	@PutMapping("/group/{id}")
-	ResponseEntity<Group> updateGroup(@PathVariable BigInteger id, @Valid @RequestBody Group group) {
-		group.setId(id);
+	ResponseEntity<Group> updateGroup(@PathVariable Long id, @Valid @RequestBody Group group) {
+		group.setId(BigInteger.valueOf(id));
 		log.info("Request to update group: {}", group);
 		Group result = groupRepository.save(group);
 		return ResponseEntity.ok().body(result);
 	}
 
 	@DeleteMapping("/group/{id}")
-	public ResponseEntity<?> deleteGroup(@PathVariable BigInteger id) {
+	public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
 		log.info("Request to delete group: {}", id);
-		groupRepository.deleteById(id);
+		groupRepository.deleteById(BigInteger.valueOf(id));
 		return ResponseEntity.ok().build();
 	}
 }

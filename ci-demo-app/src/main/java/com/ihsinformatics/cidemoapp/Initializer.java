@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.cidemoapp.model.Event;
@@ -33,7 +32,6 @@ import com.ihsinformatics.cidemoapp.model.MongoGroupRepository;
 public class Initializer implements CommandLineRunner {
 
 	@Autowired
-	MongoTemplate mongoTemplate;
 	private final MongoGroupRepository repository;
 
 	public Initializer(MongoGroupRepository repository) {

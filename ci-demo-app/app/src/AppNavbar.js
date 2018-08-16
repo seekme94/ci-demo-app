@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-class AppNavbar extends Component {
+export default class AppNavbar extends Component {
   constructor(props) {
     super(props);
     this.state = {isOpen: false};
@@ -10,24 +10,25 @@ class AppNavbar extends Component {
   }
 
   toggle() {
-    this.setState({isOpen: !this.state.isOpen});
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
   }
 
   render() {
     return <Navbar color="dark" dark expand="md">
-    <NavbarToggler onClick={this.toggle}/>
-    <Collapse isOpen={this.state.isOpen} navbar>
-      <Nav className="ml-auto" navbar>
-        <NavItem>
-          <NavLink href="https://twitter.com/oktadev">@oktadev</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink href="https://github.com/oktadeveloper/okta-spring-boot-react-crud-example">GitHub</NavLink>
-        </NavItem>
-      </Nav>
-    </Collapse>
-    </Navbar>
+      <NavbarBrand tag={Link} to="/">Home</NavbarBrand>
+      <NavbarToggler onClick={this.toggle}/>
+      <Collapse isOpen={this.state.isOpen} navbar>
+        <Nav className="ml-auto" navbar>
+          <NavItem>
+            <NavLink href="https://git.ihsinformatics.com/owais.hussain/ci-demo-app">Code</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink href="owais.hussain@ihsinformatics.com">@Developer</NavLink>
+          </NavItem>
+        </Nav>
+      </Collapse>
+    </Navbar>;
   }
 }
-
-export default AppNavbar;

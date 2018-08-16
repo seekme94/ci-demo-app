@@ -12,23 +12,60 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.web;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.ihsinformatics.cidemoapp.model.Group;
+import com.ihsinformatics.cidemoapp.model.MongoGroupRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
+@RunWith(MockitoJUnitRunner.class)
 public class GroupControllerTest {
+
+	protected static final String API_PREFIX = "/api/";
+
+	protected MockMvc mockMvc;
+
+	@Mock
+	private MongoGroupRepository repository;
+
+	@InjectMocks
+	protected GroupController groupController;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
+		mockMvc = MockMvcBuilders.standaloneSetup(groupController).build();
 	}
 
 	/**
@@ -39,19 +76,33 @@ public class GroupControllerTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.cidemoapp.web.GroupController#groups()}.
+	 * Test method for
+	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#getGroup(java.lang.Long)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public final void testGroups() {
-		fail("Not yet implemented"); // TODO
+	public final void testGetGroupById() throws Exception {
+		Group group = new Group("Test Group");
+		BigInteger id = new BigInteger("1");
+		group.setId(id);
+		when(repository.findGroupById(id)).thenReturn(group);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "group/{id}", group.getId().longValue()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.name", Matchers.is(group.getName())));
+		verify(repository, times(1)).findById(id);
 	}
 
-	/**
-	 * Test method for {@link com.ihsinformatics.cidemoapp.web.GroupController#getGroup(java.lang.Long)}.
-	 */
 	@Test
-	public final void testGetGroup() {
-		fail("Not yet implemented"); // TODO
+	public final void testGetAllGroups() throws Exception {
+		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"), new Group("Test Group 3"));
+		when(repository.findAll()).thenReturn(groups);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "groups"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(repository, times(1)).findAll();
+		verifyNoMoreInteractions(repository);
 	}
 
 	/**
@@ -59,7 +110,7 @@ public class GroupControllerTest {
 	 */
 	@Test
 	public final void testCreateGroup() {
-		fail("Not yet implemented"); // TODO
+		// TODO:
 	}
 
 	/**
@@ -67,7 +118,7 @@ public class GroupControllerTest {
 	 */
 	@Test
 	public final void testUpdateGroup() {
-		fail("Not yet implemented"); // TODO
+		// TODO:
 	}
 
 	/**
@@ -75,7 +126,6 @@ public class GroupControllerTest {
 	 */
 	@Test
 	public final void testDeleteGroup() {
-		fail("Not yet implemented"); // TODO
+		// TODO:
 	}
-
 }
