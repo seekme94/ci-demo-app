@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -40,7 +41,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.cidemoapp.model.Group;
-import com.ihsinformatics.cidemoapp.model.MongoGroupRepository;
+import com.ihsinformatics.cidemoapp.model.GroupRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -54,7 +55,7 @@ public class GroupControllerTest {
 	protected MockMvc mockMvc;
 
 	@Mock
-	private MongoGroupRepository repository;
+	private GroupRepository repository;
 
 	@InjectMocks
 	protected GroupController groupController;
@@ -86,7 +87,7 @@ public class GroupControllerTest {
 		Group group = new Group("Test Group");
 		BigInteger id = new BigInteger("1");
 		group.setId(id);
-		when(repository.findGroupById(id)).thenReturn(group);
+		when(repository.findById(id)).thenReturn(Optional.of(group));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "group/{id}", group.getId().longValue()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.name", Matchers.is(group.getName())));
@@ -95,7 +96,8 @@ public class GroupControllerTest {
 
 	@Test
 	public final void testGetAllGroups() throws Exception {
-		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"), new Group("Test Group 3"));
+		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"),
+				new Group("Test Group 3"));
 		when(repository.findAll()).thenReturn(groups);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "groups"));
 		actions.andExpect(status().isOk());
@@ -106,7 +108,8 @@ public class GroupControllerTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.cidemoapp.web.GroupController#createGroup(com.ihsinformatics.cidemoapp.model.Group)}.
+	 * Test method for
+	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#createGroup(com.ihsinformatics.cidemoapp.model.Group)}.
 	 */
 	@Test
 	public final void testCreateGroup() {
@@ -114,7 +117,8 @@ public class GroupControllerTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.cidemoapp.web.GroupController#updateGroup(java.lang.Long, com.ihsinformatics.cidemoapp.model.Group)}.
+	 * Test method for
+	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#updateGroup(java.lang.Long, com.ihsinformatics.cidemoapp.model.Group)}.
 	 */
 	@Test
 	public final void testUpdateGroup() {
@@ -122,7 +126,8 @@ public class GroupControllerTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.cidemoapp.web.GroupController#deleteGroup(java.lang.Long)}.
+	 * Test method for
+	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#deleteGroup(java.lang.Long)}.
 	 */
 	@Test
 	public final void testDeleteGroup() {

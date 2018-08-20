@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.cidemoapp.model;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -20,9 +21,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface MongoGroupRepository extends MongoRepository<Group, BigInteger> {
+public interface UserRepository extends MongoRepository<User, BigInteger> {
 
-	Group findGroupById(BigInteger id);
-
-	Group findByName(String name);
+	List<User> findAllByName(String name);
 }

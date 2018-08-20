@@ -14,30 +14,13 @@ package com.ihsinformatics.cidemoapp.model;
 
 import java.math.BigInteger;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "users")
-public class User {
+public interface GroupRepository extends MongoRepository<Group, BigInteger> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigInteger id;
-	private String name;
-	private String email;
+	Group findByName(String name);
 }

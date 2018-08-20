@@ -16,7 +16,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -34,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.cidemoapp.model.Group;
-import com.ihsinformatics.cidemoapp.model.GroupRepository;
+import com.ihsinformatics.cidemoapp.model.User;
+import com.ihsinformatics.cidemoapp.model.UserRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -43,47 +42,51 @@ import com.ihsinformatics.cidemoapp.model.GroupRepository;
  */
 @RestController
 @RequestMapping("/api")
-public class GroupController {
+public class UserController {
 
 	private final Logger log = LoggerFactory.getLogger(GroupController.class);
-	private GroupRepository groupRepository;
+	private UserRepository userRepository;
 
-	public GroupController(GroupRepository groupRepository) {
-		this.groupRepository = groupRepository;
+	public UserController(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 
-	@GetMapping("/groups")
-	Collection<Group> groups() {
-		List<Group> list = groupRepository.findAll();
-		return list;
+	@GetMapping("/users")
+	Collection<User> groups() {
+		return userRepository.findAll();
 	}
 
-	@GetMapping("/group/{id}")
-	ResponseEntity<Group> getGroup(@PathVariable Long id) {
-		Optional<Group> group = groupRepository.findById(BigInteger.valueOf(id));
-		return group.map(response -> ResponseEntity.ok().body(response))
-				.orElse(new ResponseEntity<Group>(HttpStatus.NOT_FOUND));
+	@GetMapping("/users/{name}")
+	Collection<User> getUserByName(@PathVariable String name) {
+		return userRepository.findAllByName(name);
 	}
 
-	@PostMapping("/group")
-	ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
-		log.info("Request to create group: {}", group);
-		Group result = groupRepository.save(group);
-		return ResponseEntity.created(new URI("/api/group/" + result.getId())).body(result);
+	@GetMapping("/user/{id}")
+	ResponseEntity<User> getUser(@PathVariable Long id) {
+		Optional<User> user = userRepository.findById(BigInteger.valueOf(id));
+		return user.map(response -> ResponseEntity.ok().body(response))
+				.orElse(new ResponseEntity<User>(HttpStatus.NOT_FOUND));
 	}
 
-	@PutMapping("/group/{id}")
-	ResponseEntity<Group> updateGroup(@PathVariable Long id, @Valid @RequestBody Group group) {
-		group.setId(BigInteger.valueOf(id));
-		log.info("Request to update group: {}", group);
-		Group result = groupRepository.save(group);
+	@PostMapping("/user")
+	ResponseEntity<User> createUser(@Valid @RequestBody User user) throws URISyntaxException {
+		log.info("Request to create user: {}", user);
+		User result = userRepository.save(user);
+		return ResponseEntity.created(new URI("/api/user/" + result.getId())).body(result);
+	}
+
+	@PutMapping("/user/{id}")
+	ResponseEntity<User> updateGroup(@PathVariable Long id, @Valid @RequestBody User user) {
+		user.setId(BigInteger.valueOf(id));
+		log.info("Request to update user: {}", user);
+		User result = userRepository.save(user);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/group/{id}")
+	@DeleteMapping("/user/{id}")
 	public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
-		log.info("Request to delete group: {}", id);
-		groupRepository.deleteById(BigInteger.valueOf(id));
+		log.info("Request to delete user: {}", id);
+		userRepository.deleteById(BigInteger.valueOf(id));
 		return ResponseEntity.ok().build();
 	}
 }

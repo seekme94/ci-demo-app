@@ -13,7 +13,9 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.cidemoapp;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,9 @@ import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.cidemoapp.model.Event;
 import com.ihsinformatics.cidemoapp.model.Group;
-import com.ihsinformatics.cidemoapp.model.MongoGroupRepository;
+import com.ihsinformatics.cidemoapp.model.GroupRepository;
+import com.ihsinformatics.cidemoapp.model.User;
+import com.ihsinformatics.cidemoapp.model.UserRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -32,10 +36,14 @@ import com.ihsinformatics.cidemoapp.model.MongoGroupRepository;
 public class Initializer implements CommandLineRunner {
 
 	@Autowired
-	private final MongoGroupRepository repository;
+	private final GroupRepository groupRepository;
 
-	public Initializer(MongoGroupRepository repository) {
-		this.repository = repository;
+	@Autowired
+	private final UserRepository userRepository;
+
+	public Initializer(GroupRepository groupRepository, UserRepository userRepository) {
+		this.groupRepository = groupRepository;
+		this.userRepository = userRepository;
 	}
 
 	/*
@@ -45,9 +53,17 @@ public class Initializer implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
+		createUsers();
 		createGroups();
 		createEvents();
-		repository.findAll().forEach(System.out::println);
+		userRepository.findAll().forEach(System.out::println);
+		groupRepository.findAll().forEach(System.out::println);
+	}
+
+	private void createUsers() {
+		List<User> list = Arrays.asList(new User(null, "ihs", "info@ihsinformatics.com"),
+				new User(null, "owais", "owais.hussain@ihsinformatics.com"));
+		list.forEach(user -> saveOrUpdateUser(user));
 	}
 
 	private void createGroups() {
@@ -55,26 +71,34 @@ public class Initializer implements CommandLineRunner {
 				.forEach(name -> saveOrUpdateGroup(new Group(name)));
 	}
 
+	private Object saveOrUpdateUser(User user) {
+		List<User> exist = userRepository.findAllByName(user.getName());
+		if (!exist.isEmpty()) {
+			user.setId(exist.get(0).getId());
+		}
+		return userRepository.save(user);
+	}
+
 	private Group saveOrUpdateGroup(Group group) {
-		Group exist = repository.findByName(group.getName());
+		Group exist = groupRepository.findByName(group.getName());
 		if (exist != null) {
 			group.setId(exist.getId());
 		}
-		return repository.save(group);
+		return groupRepository.save(group);
 	}
 
 	private void createEvents() {
-		Group developer = repository.findByName("Developer");
+		Group developer = groupRepository.findByName("Developer");
 		Event devEvent = Event.builder().title("Full Stack Reactive App")
 				.description("Reactive with Spring Boot + React").date(Instant.parse("2018-08-10T12:00:00.000Z"))
 				.build();
 		developer.setEvents(Collections.singleton(devEvent));
-		repository.save(developer);
+		groupRepository.save(developer);
 
-		Group qa = repository.findByName("Quality Assurance");
+		Group qa = groupRepository.findByName("Quality Assurance");
 		Event qaEvent = Event.builder().title("Mockito").description("Introduction to Mockito library for unit testing")
 				.date(Instant.parse("2018-05-15T09:30:00.000Z")).build();
 		qa.setEvents(Collections.singleton(qaEvent));
-		repository.save(qa);
+		groupRepository.save(qa);
 	}
 }
