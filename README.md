@@ -11,7 +11,6 @@ $ create-react-app app
 # Add required libraries to React app
 $ cd app
 $ npm add bootstrap@4.1.2 react-cookie@2.2.0 react-router-dom@4.3.1 reactstrap@6.3.0
-$ npm install --save react-tag-autocomplete
 
 # Install MongoDB for your OS and execute following
 $ mongo
