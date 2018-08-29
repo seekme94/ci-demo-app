@@ -21,7 +21,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -38,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@Table(name = "user_group")
+@Table(name = "groups")
 public class Group {
 
 	@Id
@@ -51,9 +50,6 @@ public class Group {
 	private String stateOrProvince;
 	private String country;
 	private String postalCode;
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	private User user;
-
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Event> events;
 }

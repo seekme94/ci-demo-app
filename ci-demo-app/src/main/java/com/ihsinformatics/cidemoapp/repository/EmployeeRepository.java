@@ -10,17 +10,19 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.cidemoapp.model;
+package com.ihsinformatics.cidemoapp.repository;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.ihsinformatics.cidemoapp.model.Employee;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface GroupRepository extends MongoRepository<Group, BigInteger> {
-
-	Group findByName(String name);
+public interface EmployeeRepository extends MongoRepository<Employee, BigInteger> {
+	List<Employee> findByName(String name);
 }

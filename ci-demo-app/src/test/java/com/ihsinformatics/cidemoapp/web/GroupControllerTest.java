@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -41,7 +40,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.cidemoapp.model.Group;
-import com.ihsinformatics.cidemoapp.model.GroupRepository;
+import com.ihsinformatics.cidemoapp.service.ServiceImpl;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -55,7 +54,7 @@ public class GroupControllerTest {
 	protected MockMvc mockMvc;
 
 	@Mock
-	private GroupRepository repository;
+	private ServiceImpl service;
 
 	@InjectMocks
 	protected GroupController groupController;
@@ -87,24 +86,24 @@ public class GroupControllerTest {
 		Group group = new Group("Test Group");
 		BigInteger id = new BigInteger("1");
 		group.setId(id);
-		when(repository.findById(id)).thenReturn(Optional.of(group));
+		when(service.getGroup(id.longValue())).thenReturn(group);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "group/{id}", group.getId().longValue()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.name", Matchers.is(group.getName())));
-		verify(repository, times(1)).findById(id);
+		verify(service, times(1)).getGroup(id.longValue());
 	}
 
 	@Test
 	public final void testGetAllGroups() throws Exception {
 		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"),
 				new Group("Test Group 3"));
-		when(repository.findAll()).thenReturn(groups);
+		when(service.getGroups()).thenReturn(groups);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "groups"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(repository, times(1)).findAll();
-		verifyNoMoreInteractions(repository);
+		verify(service, times(1)).getGroups();
+		verifyNoMoreInteractions(service);
 	}
 
 	/**

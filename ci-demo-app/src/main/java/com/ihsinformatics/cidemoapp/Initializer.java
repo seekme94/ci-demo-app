@@ -15,18 +15,19 @@ package com.ihsinformatics.cidemoapp;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.cidemoapp.model.Employee;
 import com.ihsinformatics.cidemoapp.model.Event;
 import com.ihsinformatics.cidemoapp.model.Group;
-import com.ihsinformatics.cidemoapp.model.GroupRepository;
-import com.ihsinformatics.cidemoapp.model.User;
-import com.ihsinformatics.cidemoapp.model.UserRepository;
+import com.ihsinformatics.cidemoapp.service.Service;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -36,14 +37,10 @@ import com.ihsinformatics.cidemoapp.model.UserRepository;
 public class Initializer implements CommandLineRunner {
 
 	@Autowired
-	private final GroupRepository groupRepository;
+	private final Service service;
 
-	@Autowired
-	private final UserRepository userRepository;
-
-	public Initializer(GroupRepository groupRepository, UserRepository userRepository) {
-		this.groupRepository = groupRepository;
-		this.userRepository = userRepository;
+	public Initializer(Service service) {
+		this.service = service;
 	}
 
 	/*
@@ -53,17 +50,10 @@ public class Initializer implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
-		createUsers();
 		createGroups();
+		createEmployees();
 		createEvents();
-		userRepository.findAll().forEach(System.out::println);
-		groupRepository.findAll().forEach(System.out::println);
-	}
-
-	private void createUsers() {
-		List<User> list = Arrays.asList(new User(null, "ihs", "info@ihsinformatics.com"),
-				new User(null, "owais", "owais.hussain@ihsinformatics.com"));
-		list.forEach(user -> saveOrUpdateUser(user));
+		service.getEvents().forEach(System.out::println);
 	}
 
 	private void createGroups() {
@@ -71,34 +61,56 @@ public class Initializer implements CommandLineRunner {
 				.forEach(name -> saveOrUpdateGroup(new Group(name)));
 	}
 
-	private Object saveOrUpdateUser(User user) {
-		List<User> exist = userRepository.findAllByName(user.getName());
-		if (!exist.isEmpty()) {
-			user.setId(exist.get(0).getId());
-		}
-		return userRepository.save(user);
-	}
-
 	private Group saveOrUpdateGroup(Group group) {
-		Group exist = groupRepository.findByName(group.getName());
+		Group exist = service.getGroupByName(group.getName());
 		if (exist != null) {
 			group.setId(exist.getId());
 		}
-		return groupRepository.save(group);
+		return service.saveGroup(group);
+	}
+
+	private void createEmployees() {
+		Stream.of("Owais", "Naveed", "Tahira", "Omar", "Adnan", "Moiz", "Babar", "Irtiza", "Ahsan", "Shahid")
+				.forEach(name -> saveOrUpdateEmployee(new Employee(null, name)));
+	}
+
+	private Employee saveOrUpdateEmployee(Employee employee) {
+		List<Employee> exist = service.getEmployees(employee.getName());
+		if (!exist.isEmpty()) {
+			employee.setId(employee.getId());
+		}
+		return service.saveEmployee(employee);
 	}
 
 	private void createEvents() {
-		Group developer = groupRepository.findByName("Developer");
+		Group developer = service.getGroupByName("Developer");
+		Set<Employee> attendees = new HashSet<Employee>();
+		for (Employee employee : Arrays.asList(new Employee(null, "Owais"), new Employee(null, "Naveed"),
+				new Employee(null, "Tahira"))) {
+			attendees.add(employee);
+		}
 		Event devEvent = Event.builder().title("Full Stack Reactive App")
 				.description("Reactive with Spring Boot + React").date(Instant.parse("2018-08-10T12:00:00.000Z"))
-				.build();
+				.attendees(attendees).build();
 		developer.setEvents(Collections.singleton(devEvent));
-		groupRepository.save(developer);
+		service.saveEvent(devEvent);
 
-		Group qa = groupRepository.findByName("Quality Assurance");
+		Group qa = service.getGroupByName("Quality Assurance");
+		attendees = new HashSet<Employee>();
+		attendees.addAll(Arrays.asList(new Employee(null, "Omar"), new Employee(null, "Adnan")));
 		Event qaEvent = Event.builder().title("Mockito").description("Introduction to Mockito library for unit testing")
-				.date(Instant.parse("2018-05-15T09:30:00.000Z")).build();
+				.date(Instant.parse("2018-05-15T09:30:00.000Z")).attendees(attendees).build();
 		qa.setEvents(Collections.singleton(qaEvent));
-		groupRepository.save(qa);
+		service.saveEvent(qaEvent);
+
+		Group admin = service.getGroupByName("Administration");
+		attendees = new HashSet<Employee>();
+		attendees.addAll(Arrays.asList(new Employee(null, "Omar"), new Employee(null, "Naveed"),
+				new Employee(null, "Babar"), new Employee(null, "Moiz"), new Employee(null, "Irtiza"),
+				new Employee(null, "Ahsan"), new Employee(null, "Shahid")));
+		Event adminEvent = Event.builder().title("Cricket Tournament 2018")
+				.date(Instant.parse("2018-07-28T10:00:00.000Z")).attendees(attendees).build();
+		admin.setEvents(Collections.singleton(adminEvent));
+		service.saveEvent(adminEvent);
 	}
 }

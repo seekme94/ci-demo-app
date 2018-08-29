@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.cidemoapp.model.Group;
+import com.ihsinformatics.cidemoapp.model.Employee;
 import com.ihsinformatics.cidemoapp.service.Service;
 
 /**
@@ -42,46 +42,46 @@ import com.ihsinformatics.cidemoapp.service.Service;
  */
 @RestController
 @RequestMapping("/api")
-public class GroupController {
+public class EmployeeController {
 
-	private final Logger log = LoggerFactory.getLogger(GroupController.class);
+	private final Logger log = LoggerFactory.getLogger(EmployeeController.class);
 	private Service service;
 
-	public GroupController(Service service) {
+	public EmployeeController(Service service) {
 		this.service = service;
 	}
 
-	@GetMapping("/groups")
-	Collection<Group> groups() {
-		return service.getGroups();
+	@GetMapping("/employees")
+	Collection<Employee> employees() {
+		return service.getEmployees();
 	}
 
-	@GetMapping("/group/{id}")
-	ResponseEntity<Group> getGroup(@PathVariable Long id) {
-		Optional<Group> group = Optional.of(service.getGroup(id));
-		return group.map(response -> ResponseEntity.ok().body(response))
-				.orElse(new ResponseEntity<Group>(HttpStatus.NOT_FOUND));
+	@GetMapping("/employee/{id}")
+	ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
+		Optional<Employee> employee = Optional.of(service.getEmployee(id));
+		return employee.map(response -> ResponseEntity.ok().body(response))
+				.orElse(new ResponseEntity<Employee>(HttpStatus.NOT_FOUND));
 	}
 
-	@PostMapping("/group")
-	ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
-		log.info("Request to create group: {}", group);
-		Group result = service.saveGroup(group);
-		return ResponseEntity.created(new URI("/api/group/" + result.getId())).body(result);
+	@PostMapping("/employee")
+	ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) throws URISyntaxException {
+		log.info("Request to create employee: {}", employee);
+		Employee result = service.saveEmployee(employee);
+		return ResponseEntity.created(new URI("/api/employee/" + result.getId())).body(result);
 	}
 
-	@PutMapping("/group/{id}")
-	ResponseEntity<Group> updateGroup(@PathVariable Long id, @Valid @RequestBody Group group) {
-		group.setId(BigInteger.valueOf(id));
-		log.info("Request to update group: {}", group);
-		Group result = service.saveGroup(group);
+	@PutMapping("/employee/{id}")
+	ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @Valid @RequestBody Employee employee) {
+		employee.setId(BigInteger.valueOf(id));
+		log.info("Request to update employee: {}", employee);
+		Employee result = service.saveEmployee(employee);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/group/{id}")
-	public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
-		log.info("Request to delete group: {}", id);
-		service.deleteGroup(service.getGroup(id));
+	@DeleteMapping("/employee/{id}")
+	public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+		log.info("Request to delete employee: {}", id);
+		service.deleteEmployee(service.getEmployee(id));
 		return ResponseEntity.ok().build();
 	}
 }

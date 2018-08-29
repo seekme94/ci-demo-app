@@ -10,34 +10,20 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.cidemoapp.model;
+package com.ihsinformatics.cidemoapp.repository;
 
 import java.math.BigInteger;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.ihsinformatics.cidemoapp.model.Event;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "users")
-public class User {
+public interface EventRepository extends MongoRepository<Event, BigInteger> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigInteger id;
-	private String name;
-	private String email;
+	List<Event> findByTitle(String title);
 }

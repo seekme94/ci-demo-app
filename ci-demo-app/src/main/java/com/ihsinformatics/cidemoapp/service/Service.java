@@ -9,19 +9,56 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
+package com.ihsinformatics.cidemoapp.service;
 
-package com.ihsinformatics.cidemoapp.model;
-
-import java.math.BigInteger;
+import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.ihsinformatics.cidemoapp.model.Employee;
+import com.ihsinformatics.cidemoapp.model.Event;
+import com.ihsinformatics.cidemoapp.model.Group;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface UserRepository extends MongoRepository<User, BigInteger> {
+public interface Service {
 
-	List<User> findAllByName(String name);
+	Group getGroup(Long id);
+
+	List<Group> getGroups();
+
+	Group getGroupByName(String name);
+
+	Group saveGroup(Group group);
+
+	Group updateGroup(Group group);
+
+	void deleteGroup(Group group);
+
+	Employee getEmployee(Long id);
+
+	List<Employee> getEmployees();
+
+	List<Employee> getEmployees(String name);
+
+	Employee saveEmployee(Employee employee);
+
+	Employee updateEmployee(Employee employee);
+
+	void deleteEmployee(Employee employee);
+
+	Event getEvent(Long id);
+
+	List<Event> getEvents();
+
+	List<Event> getEvents(String title);
+
+	List<Event> getEvents(Instant from, Instant to);
+
+	Event saveEvent(Event event);
+
+	Event updateEvent(Event event);
+
+	void deleteEvent(Event event);
 }

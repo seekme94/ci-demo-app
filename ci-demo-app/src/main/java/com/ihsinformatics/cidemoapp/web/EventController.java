@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -33,8 +34,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.cidemoapp.model.User;
-import com.ihsinformatics.cidemoapp.model.UserRepository;
+import com.ihsinformatics.cidemoapp.model.Employee;
+import com.ihsinformatics.cidemoapp.model.Event;
+import com.ihsinformatics.cidemoapp.service.Service;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -42,51 +44,60 @@ import com.ihsinformatics.cidemoapp.model.UserRepository;
  */
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class EventController {
 
-	private final Logger log = LoggerFactory.getLogger(GroupController.class);
-	private UserRepository userRepository;
+	private final Logger log = LoggerFactory.getLogger(EventController.class);
+	private Service service;
 
-	public UserController(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public EventController(Service service) {
+		this.service = service;
 	}
 
-	@GetMapping("/users")
-	Collection<User> groups() {
-		return userRepository.findAll();
+	@GetMapping("/events")
+	Collection<Event> events() {
+		return service.getEvents();
 	}
 
-	@GetMapping("/users/{name}")
-	Collection<User> getUserByName(@PathVariable String name) {
-		return userRepository.findAllByName(name);
+	@GetMapping("/event/{id}")
+	ResponseEntity<Event> getEvent(@PathVariable Long id) {
+		Optional<Event> group = Optional.of(service.getEvent(id));
+		return group.map(response -> ResponseEntity.ok().body(response))
+				.orElse(new ResponseEntity<Event>(HttpStatus.NOT_FOUND));
 	}
 
-	@GetMapping("/user/{id}")
-	ResponseEntity<User> getUser(@PathVariable Long id) {
-		Optional<User> user = userRepository.findById(BigInteger.valueOf(id));
-		return user.map(response -> ResponseEntity.ok().body(response))
-				.orElse(new ResponseEntity<User>(HttpStatus.NOT_FOUND));
+	@GetMapping("/event/title/{title}")
+	Collection<Event> getEvent(@PathVariable String title) {
+		return service.getEvents(title);
 	}
 
-	@PostMapping("/user")
-	ResponseEntity<User> createUser(@Valid @RequestBody User user) throws URISyntaxException {
-		log.info("Request to create user: {}", user);
-		User result = userRepository.save(user);
-		return ResponseEntity.created(new URI("/api/user/" + result.getId())).body(result);
+	@PostMapping("/event")
+	ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
+		log.info("Request to create event: {}", event);
+		Event result = service.saveEvent(event);
+		event.getAttendees().forEach(attendee -> saveEmployee(attendee));
+		return ResponseEntity.created(new URI("/api/event/" + result.getId())).body(result);
 	}
 
-	@PutMapping("/user/{id}")
-	ResponseEntity<User> updateGroup(@PathVariable Long id, @Valid @RequestBody User user) {
-		user.setId(BigInteger.valueOf(id));
-		log.info("Request to update user: {}", user);
-		User result = userRepository.save(user);
+	private Employee saveEmployee(Employee attendee) {
+		List<Employee> list = service.getEmployees(attendee.getName());
+		if (list.isEmpty()) {
+			service.saveEmployee(new Employee(null, attendee.getName()));
+		}
+		return attendee;
+	}
+
+	@PutMapping("/event/{id}")
+	ResponseEntity<Event> updateEvent(@PathVariable Long id, @Valid @RequestBody Event event) {
+		event.setId(BigInteger.valueOf(id));
+		log.info("Request to update event: {}", event);
+		Event result = service.saveEvent(event);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/user/{id}")
-	public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
-		log.info("Request to delete user: {}", id);
-		userRepository.deleteById(BigInteger.valueOf(id));
+	@DeleteMapping("/event/{id}")
+	public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+		log.info("Request to delete event: {}", id);
+		service.deleteEvent(service.getEvent(id));
 		return ResponseEntity.ok().build();
 	}
 }
