@@ -12,37 +12,33 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.model;
 
-import java.math.BigInteger;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "groups")
 public class Group {
-
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigInteger id;
+	@Column(name = "uuid", updatable = false, nullable = false)
+	private String uuid = UUID.randomUUID().toString();
 	@NonNull
 	private String name;
 	private String address;
@@ -52,4 +48,13 @@ public class Group {
 	private String postalCode;
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Event> events;
+
+	public Group() {
+		this(null);
+	}
+
+	public Group(String name) {
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+	}
 }

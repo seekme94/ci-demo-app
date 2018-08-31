@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.web;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -56,9 +55,9 @@ public class GroupController {
 		return service.getGroups();
 	}
 
-	@GetMapping("/group/{id}")
-	ResponseEntity<Group> getGroup(@PathVariable Long id) {
-		Optional<Group> group = Optional.of(service.getGroup(id));
+	@GetMapping("/group/{uuid}")
+	ResponseEntity<Group> getGroup(@PathVariable String uuid) {
+		Optional<Group> group = Optional.of(service.getGroup(uuid));
 		return group.map(response -> ResponseEntity.ok().body(response))
 				.orElse(new ResponseEntity<Group>(HttpStatus.NOT_FOUND));
 	}
@@ -67,21 +66,21 @@ public class GroupController {
 	ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
 		log.info("Request to create group: {}", group);
 		Group result = service.saveGroup(group);
-		return ResponseEntity.created(new URI("/api/group/" + result.getId())).body(result);
+		return ResponseEntity.created(new URI("/api/group/" + result.getUuid())).body(result);
 	}
 
-	@PutMapping("/group/{id}")
-	ResponseEntity<Group> updateGroup(@PathVariable Long id, @Valid @RequestBody Group group) {
-		group.setId(BigInteger.valueOf(id));
+	@PutMapping("/group/{uuid}")
+	ResponseEntity<Group> updateGroup(@PathVariable String uuid, @Valid @RequestBody Group group) {
+		group.setUuid(uuid);
 		log.info("Request to update group: {}", group);
 		Group result = service.saveGroup(group);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/group/{id}")
-	public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
-		log.info("Request to delete group: {}", id);
-		service.deleteGroup(service.getGroup(id));
+	@DeleteMapping("/group/{uuid}")
+	public ResponseEntity<?> deleteGroup(@PathVariable String uuid) {
+		log.info("Request to delete group: {}", uuid);
+		service.deleteGroup(service.getGroup(uuid));
 		return ResponseEntity.ok().build();
 	}
 }

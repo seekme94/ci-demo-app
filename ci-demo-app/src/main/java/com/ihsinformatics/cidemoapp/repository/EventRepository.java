@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.repository;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -23,7 +22,9 @@ import com.ihsinformatics.cidemoapp.model.Event;
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface EventRepository extends MongoRepository<Event, BigInteger> {
+public interface EventRepository extends MongoRepository<Event, String> {
+
+	Event findByUuid(String uuid);
 
 	List<Event> findByTitle(String title);
 }

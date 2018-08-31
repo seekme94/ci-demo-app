@@ -12,17 +12,15 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.model;
 
-import java.math.BigInteger;
+import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -30,14 +28,23 @@ import lombok.NonNull;
  *
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "employee")
 public class Employee {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigInteger id;
+	@Column(name = "uuid", updatable = false, nullable = false)
+	private String uuid = UUID.randomUUID().toString();
+
 	@NonNull
 	private String name;
+
+	public Employee() {
+		this(null);
+	}
+
+	public Employee(String name) {
+		this.uuid = UUID.randomUUID().toString();
+		this.name = name;
+	}
 }

@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.web;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -56,9 +55,9 @@ public class EmployeeController {
 		return service.getEmployees();
 	}
 
-	@GetMapping("/employee/{id}")
-	ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-		Optional<Employee> employee = Optional.of(service.getEmployee(id));
+	@GetMapping("/employee/{uuid}")
+	ResponseEntity<Employee> getEmployee(@PathVariable String uuid) {
+		Optional<Employee> employee = Optional.of(service.getEmployee(uuid));
 		return employee.map(response -> ResponseEntity.ok().body(response))
 				.orElse(new ResponseEntity<Employee>(HttpStatus.NOT_FOUND));
 	}
@@ -67,21 +66,21 @@ public class EmployeeController {
 	ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) throws URISyntaxException {
 		log.info("Request to create employee: {}", employee);
 		Employee result = service.saveEmployee(employee);
-		return ResponseEntity.created(new URI("/api/employee/" + result.getId())).body(result);
+		return ResponseEntity.created(new URI("/api/employee/" + result.getUuid())).body(result);
 	}
 
-	@PutMapping("/employee/{id}")
-	ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @Valid @RequestBody Employee employee) {
-		employee.setId(BigInteger.valueOf(id));
+	@PutMapping("/employee/{uuid}")
+	ResponseEntity<Employee> updateEmployee(@PathVariable String uuid, @Valid @RequestBody Employee employee) {
+		employee.setUuid(uuid);
 		log.info("Request to update employee: {}", employee);
 		Employee result = service.saveEmployee(employee);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/employee/{id}")
-	public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-		log.info("Request to delete employee: {}", id);
-		service.deleteEmployee(service.getEmployee(id));
+	@DeleteMapping("/employee/{uuid}")
+	public ResponseEntity<?> deleteEmployee(@PathVariable String uuid) {
+		log.info("Request to delete employee: {}", uuid);
+		service.deleteEmployee(service.getEmployee(uuid));
 		return ResponseEntity.ok().build();
 	}
 }

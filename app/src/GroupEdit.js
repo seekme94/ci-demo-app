@@ -24,8 +24,8 @@ class GroupEdit extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.match.params.id !== 'new') {
-      const group = await (await fetch(`/api/group/${this.props.match.params.id}`)).json()
+    if (this.props.match.params.uuid !== 'new') {
+      const group = await (await fetch(`/api/group/${this.props.match.params.uuid}`)).json()
       this.setState({item: group});
     }
   }
@@ -44,7 +44,7 @@ class GroupEdit extends Component {
     const {item} = this.state;
 
     await fetch('/api/group', {
-      method: (item.id) ? 'PUT' : 'POST',
+      method: (item.uuid) ? 'PUT' : 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ class GroupEdit extends Component {
 
   render() {
     const {item} = this.state;
-    const title = <h2>{item.id ? 'Edit Group' : 'Add Group'}</h2>
+    const title = <h2>{item.uuid ? 'Edit Group' : 'Add Group'}</h2>
 
     return <div>
       <AppNavbar></AppNavbar>

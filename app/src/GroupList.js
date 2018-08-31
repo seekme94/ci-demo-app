@@ -17,11 +17,11 @@ class GroupList extends Component {
       .then(data => this.setState({groups: data, isLoading:  false}));
   }
 
-  async remove(id) {
-    await fetch(`/api/group/${id}`, {
+  async remove(uuid) {
+    await fetch(`/api/group/${uuid}`, {
       method: 'DELETE', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
     }).then(() => {
-      let updatedGroups = [...this.state.groups].filter(i => i.id !== id);
+      let updatedGroups = [...this.state.groups].filter(i => i.uuid !== uuid);
       this.setState({groups: updatedGroups});
     });
   }
@@ -33,14 +33,13 @@ class GroupList extends Component {
     }
     const groupList = groups.map(group => {
       const address = `${group.address || ''} ${group.city || ''} ${group.stateOrProvince || ''} `;
-      return <tr key={group.id}>
+      return <tr key={group.uuid}>
         <td>{group.name}</td>
         <td>{address}</td>
-        <td>Events here</td>
         <td>
           <ButtonGroup>
-            <Button size="sm" color="primary" tag={Link} to={"/groups/" + group.id}>Edit</Button>
-            <Button size="sm" color="danger" onClick={() => this.remove(group.id)}>Delete</Button>
+            <Button size="sm" color="primary" tag={Link} to={"/groups/" + group.uuid}>Edit</Button>
+            <Button size="sm" color="danger" onClick={() => this.remove(group.uuid)}>Delete</Button>
           </ButtonGroup>
         </td>
       </tr>
@@ -58,7 +57,6 @@ class GroupList extends Component {
             <tr>
               <th width="20%">Name</th>
               <th width="20%">Location</th>
-              <th>Events</th>
               <th width="10%">Actions</th>
             </tr>
             </thead>

@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.web;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -58,16 +57,11 @@ public class EventController {
 		return service.getEvents();
 	}
 
-	@GetMapping("/event/{id}")
-	ResponseEntity<Event> getEvent(@PathVariable Long id) {
-		Optional<Event> group = Optional.of(service.getEvent(id));
+	@GetMapping("/event/{uuid}")
+	ResponseEntity<Event> getEvent(@PathVariable String uuid) {
+		Optional<Event> group = Optional.of(service.getEvent(uuid));
 		return group.map(response -> ResponseEntity.ok().body(response))
 				.orElse(new ResponseEntity<Event>(HttpStatus.NOT_FOUND));
-	}
-
-	@GetMapping("/event/title/{title}")
-	Collection<Event> getEvent(@PathVariable String title) {
-		return service.getEvents(title);
 	}
 
 	@PostMapping("/event")
@@ -75,29 +69,29 @@ public class EventController {
 		log.info("Request to create event: {}", event);
 		Event result = service.saveEvent(event);
 		event.getAttendees().forEach(attendee -> saveEmployee(attendee));
-		return ResponseEntity.created(new URI("/api/event/" + result.getId())).body(result);
+		return ResponseEntity.created(new URI("/api/event/" + result.getUuid())).body(result);
 	}
 
 	private Employee saveEmployee(Employee attendee) {
-		List<Employee> list = service.getEmployees(attendee.getName());
+		List<Employee> list = service.getEmployeesByName(attendee.getName());
 		if (list.isEmpty()) {
 			service.saveEmployee(new Employee(null, attendee.getName()));
 		}
 		return attendee;
 	}
 
-	@PutMapping("/event/{id}")
-	ResponseEntity<Event> updateEvent(@PathVariable Long id, @Valid @RequestBody Event event) {
-		event.setId(BigInteger.valueOf(id));
+	@PutMapping("/event/{uuid}")
+	ResponseEntity<Event> updateEvent(@PathVariable String uuid, @Valid @RequestBody Event event) {
+		event.setUuid(uuid);
 		log.info("Request to update event: {}", event);
 		Event result = service.saveEvent(event);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/event/{id}")
-	public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
-		log.info("Request to delete event: {}", id);
-		service.deleteEvent(service.getEvent(id));
+	@DeleteMapping("/event/{uuid}")
+	public ResponseEntity<?> deleteEvent(@PathVariable String uuid) {
+		log.info("Request to delete event: {}", uuid);
+		service.deleteEvent(service.getEvent(uuid));
 		return ResponseEntity.ok().build();
 	}
 }

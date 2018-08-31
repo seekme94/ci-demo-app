@@ -24,7 +24,7 @@ import com.ihsinformatics.cidemoapp.model.Group;
  */
 public interface Service {
 
-	Group getGroup(Long id);
+	Group getGroup(String uuid);
 
 	List<Group> getGroups();
 
@@ -36,11 +36,11 @@ public interface Service {
 
 	void deleteGroup(Group group);
 
-	Employee getEmployee(Long id);
+	Employee getEmployee(String uuid);
 
 	List<Employee> getEmployees();
 
-	List<Employee> getEmployees(String name);
+	List<Employee> getEmployeesByName(String name);
 
 	Employee saveEmployee(Employee employee);
 
@@ -48,11 +48,11 @@ public interface Service {
 
 	void deleteEmployee(Employee employee);
 
-	Event getEvent(Long id);
+	Event getEvent(String uuid);
 
 	List<Event> getEvents();
 
-	List<Event> getEvents(String title);
+	List<Event> getEventsByTitle(String title);
 
 	List<Event> getEvents(Instant from, Instant to);
 

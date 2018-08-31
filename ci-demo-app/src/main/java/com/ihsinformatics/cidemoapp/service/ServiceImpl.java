@@ -11,7 +11,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.cidemoapp.service;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 
@@ -53,8 +52,9 @@ public class ServiceImpl implements Service {
 	 * @see com.ihsinformatics.cidemoapp.service.Service#getGroup(java.lang.Long)
 	 */
 	@Override
-	public Group getGroup(Long id) {
-		return groupRepository.findById(BigInteger.valueOf(id)).get();
+	public Group getGroup(String uuid) {
+		Group group = groupRepository.findByUuid(uuid);
+		return group;
 	}
 
 	/*
@@ -119,8 +119,8 @@ public class ServiceImpl implements Service {
 	 * @see com.ihsinformatics.cidemoapp.service.Service#getEmployee(java.lang.Long)
 	 */
 	@Override
-	public Employee getEmployee(Long id) {
-		return employeeRepository.findById(BigInteger.valueOf(id)).get();
+	public Employee getEmployee(String uuid) {
+		return employeeRepository.findByUuid(uuid);
 	}
 
 	/*
@@ -140,7 +140,7 @@ public class ServiceImpl implements Service {
 	 * com.ihsinformatics.cidemoapp.service.Service#getEmployees(java.lang.String)
 	 */
 	@Override
-	public List<Employee> getEmployees(String name) {
+	public List<Employee> getEmployeesByName(String name) {
 		return employeeRepository.findByName(name);
 	}
 
@@ -184,8 +184,8 @@ public class ServiceImpl implements Service {
 	 * @see com.ihsinformatics.cidemoapp.service.Service#getEvent(java.lang.Long)
 	 */
 	@Override
-	public Event getEvent(Long id) {
-		return eventRepository.findById(BigInteger.valueOf(id)).get();
+	public Event getEvent(String uuid) {
+		return eventRepository.findByUuid(uuid);
 	}
 
 	/*
@@ -204,7 +204,7 @@ public class ServiceImpl implements Service {
 	 * @see com.ihsinformatics.cidemoapp.service.Service#getEvents(java.lang.String)
 	 */
 	@Override
-	public List<Event> getEvents(String title) {
+	public List<Event> getEventsByTitle(String title) {
 		return eventRepository.findByTitle(title);
 	}
 
@@ -231,6 +231,10 @@ public class ServiceImpl implements Service {
 	 */
 	@Override
 	public Event saveEvent(Event event) {
+		List<Event> exist = eventRepository.findByTitle(event.getTitle());
+		if (!exist.isEmpty()) {
+			return exist.get(0);
+		}
 		return eventRepository.save(event);
 	}
 

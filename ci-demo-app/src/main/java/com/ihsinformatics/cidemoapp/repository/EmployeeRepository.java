@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.repository;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -23,6 +22,9 @@ import com.ihsinformatics.cidemoapp.model.Employee;
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface EmployeeRepository extends MongoRepository<Employee, BigInteger> {
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+
+	Employee findByUuid(String uuid);
+
 	List<Employee> findByName(String name);
 }

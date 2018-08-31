@@ -12,8 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.repository;
 
-import java.math.BigInteger;
-
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.ihsinformatics.cidemoapp.model.Group;
@@ -22,7 +20,9 @@ import com.ihsinformatics.cidemoapp.model.Group;
  * @author owais.hussain@ihsinformatics.com
  *
  */
-public interface GroupRepository extends MongoRepository<Group, BigInteger> {
+public interface GroupRepository extends MongoRepository<Group, String> {
+
+	Group findByUuid(String uuid);
 
 	Group findByName(String name);
 }

@@ -12,15 +12,14 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.model;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -28,7 +27,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -36,15 +34,15 @@ import lombok.NonNull;
  *
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "event")
 public class Event {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private BigInteger id;
+	@Column(name = "uuid", updatable = false, nullable = false)
+	@Builder.Default
+	private String uuid = UUID.randomUUID().toString();
 	@NonNull
 	private Instant date;
 	@NonNull
@@ -52,4 +50,13 @@ public class Event {
 	private String description;
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Employee> attendees;
+
+	public Event() {
+		this(null);
+	}
+
+	public Event(String title) {
+		this.uuid = UUID.randomUUID().toString();
+		this.title = title;
+	}
 }

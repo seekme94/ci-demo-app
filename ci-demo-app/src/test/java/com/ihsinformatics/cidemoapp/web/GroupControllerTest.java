@@ -21,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -84,13 +84,13 @@ public class GroupControllerTest {
 	@Test
 	public final void testGetGroupById() throws Exception {
 		Group group = new Group("Test Group");
-		BigInteger id = new BigInteger("1");
-		group.setId(id);
-		when(service.getGroup(id.longValue())).thenReturn(group);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "group/{id}", group.getId().longValue()));
+		String uuid = UUID.randomUUID().toString();
+		group.setUuid(uuid);
+		when(service.getGroup(uuid.toString())).thenReturn(group);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "group/{uuid}", group.getUuid()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.name", Matchers.is(group.getName())));
-		verify(service, times(1)).getGroup(id.longValue());
+		verify(service, times(1)).getGroup(uuid.toString());
 	}
 
 	@Test
