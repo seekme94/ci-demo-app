@@ -1,5 +1,5 @@
-# Base image containing Java runtime
-FROM openjdk:8-jdk-alpine
+# Base Alpine Linux image containing Tomcat 8
+FROM tomcat:8-alpine
 
 LABEL maintainer="owais.hussain@ihsinformatics.com"
 
