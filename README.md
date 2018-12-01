@@ -15,3 +15,8 @@ $ npm add bootstrap@4.1.2 react-cookie@2.2.0 react-router-dom@4.3.1 reactstrap@6
 # Install MongoDB for your OS and execute following
 $ mongo
 > use appdb
+
+# Export the Spring web app as web archive
+$ mvn clean install package
+# The deployable war build will be available in target directory
+

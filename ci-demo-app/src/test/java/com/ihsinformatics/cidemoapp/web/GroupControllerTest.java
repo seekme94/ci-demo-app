@@ -49,7 +49,7 @@ import com.ihsinformatics.cidemoapp.service.ServiceImpl;
 @RunWith(MockitoJUnitRunner.class)
 public class GroupControllerTest {
 
-	protected static final String API_PREFIX = "/api/";
+	protected static String API_PREFIX = "/api/";
 
 	protected MockMvc mockMvc;
 
@@ -82,7 +82,7 @@ public class GroupControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public final void testGetGroupById() throws Exception {
+	public void testGetGroup() throws Exception {
 		Group group = new Group("Test Group");
 		String uuid = UUID.randomUUID().toString();
 		group.setUuid(uuid);
@@ -94,7 +94,7 @@ public class GroupControllerTest {
 	}
 
 	@Test
-	public final void testGetAllGroups() throws Exception {
+	public void testGroups() throws Exception {
 		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"),
 				new Group("Test Group 3"));
 		when(service.getGroups()).thenReturn(groups);
@@ -111,7 +111,7 @@ public class GroupControllerTest {
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#createGroup(com.ihsinformatics.cidemoapp.model.Group)}.
 	 */
 	@Test
-	public final void testCreateGroup() {
+	public void testCreateGroup() {
 		// TODO:
 	}
 
@@ -120,7 +120,7 @@ public class GroupControllerTest {
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#updateGroup(java.lang.Long, com.ihsinformatics.cidemoapp.model.Group)}.
 	 */
 	@Test
-	public final void testUpdateGroup() {
+	public void testUpdateGroup() {
 		// TODO:
 	}
 
@@ -129,7 +129,7 @@ public class GroupControllerTest {
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#deleteGroup(java.lang.Long)}.
 	 */
 	@Test
-	public final void testDeleteGroup() {
+	public void testDeleteGroup() {
 		// TODO:
 	}
 }
