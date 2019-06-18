@@ -141,6 +141,9 @@ public class ServiceImpl implements Service {
 	 */
 	@Override
 	public List<Employee> getEmployeesByName(String name) {
+		if (name.toLowerCase().matches("admin|administrator")) {
+			return null;
+		}
 		return employeeRepository.findByName(name);
 	}
 
