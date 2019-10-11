@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.cidemoapp.web;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -36,9 +37,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ihsinformatics.cidemoapp.model.Group;
 import com.ihsinformatics.cidemoapp.service.ServiceImpl;
 
@@ -52,6 +58,8 @@ public class GroupControllerTest {
 	protected static String API_PREFIX = "/api/";
 
 	protected MockMvc mockMvc;
+
+	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	@Mock
 	private ServiceImpl service;
@@ -82,8 +90,8 @@ public class GroupControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testGetGroup() throws Exception {
-		Group group = new Group("Test Group");
+	public void shouldGetGroup() throws Exception {
+		Group group = Group.builder().name("Test Group").build();
 		String uuid = UUID.randomUUID().toString();
 		group.setUuid(uuid);
 		when(service.getGroup(uuid.toString())).thenReturn(group);
@@ -94,9 +102,9 @@ public class GroupControllerTest {
 	}
 
 	@Test
-	public void testGroups() throws Exception {
-		List<Group> groups = Arrays.asList(new Group("Test Group 1"), new Group("Test Group 2"),
-				new Group("Test Group 3"));
+	public void shouldGetGroups() throws Exception {
+		List<Group> groups = Arrays.asList(Group.builder().name("Test Group 1").build(),
+				Group.builder().name("Test Group 2").build(), Group.builder().name("Test Group 3").build());
 		when(service.getGroups()).thenReturn(groups);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "groups"));
 		actions.andExpect(status().isOk());
@@ -109,10 +117,21 @@ public class GroupControllerTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#createGroup(com.ihsinformatics.cidemoapp.model.Group)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void testCreateGroup() {
-		// TODO:
+	public void shouldCreateGroup() throws Exception {
+		Group dev = Group.builder().name("Developers").build();
+		when(service.saveGroup(any(Group.class))).thenReturn(dev);
+		String content = gson.toJson(dev);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "group")
+			.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "group/" + dev.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(service, times(1)).saveGroup(any(Group.class));
 	}
 
 	/**
@@ -120,7 +139,7 @@ public class GroupControllerTest {
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#updateGroup(java.lang.Long, com.ihsinformatics.cidemoapp.model.Group)}.
 	 */
 	@Test
-	public void testUpdateGroup() {
+	public void shouldUpdateGroup() {
 		// TODO:
 	}
 
@@ -129,7 +148,7 @@ public class GroupControllerTest {
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#deleteGroup(java.lang.Long)}.
 	 */
 	@Test
-	public void testDeleteGroup() {
+	public void shouldDeleteGroup() {
 		// TODO:
 	}
 }

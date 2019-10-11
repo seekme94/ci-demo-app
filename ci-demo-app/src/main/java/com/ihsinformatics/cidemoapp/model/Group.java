@@ -24,7 +24,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 /**
@@ -34,27 +36,29 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @Entity
+@Builder
+@EqualsAndHashCode
 @Table(name = "groups")
 public class Group {
+
 	@Id
 	@Column(name = "uuid", updatable = false, nullable = false)
+	@Builder.Default
 	private String uuid = UUID.randomUUID().toString();
+
 	@NonNull
 	private String name;
+
 	private String address;
+
 	private String city;
+
 	private String stateOrProvince;
+
 	private String country;
+
 	private String postalCode;
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Event> events;
-
-	public Group() {
-		this(null);
-	}
-
-	public Group(String name) {
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-	}
 }

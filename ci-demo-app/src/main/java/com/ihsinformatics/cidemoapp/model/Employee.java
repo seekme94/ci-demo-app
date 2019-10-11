@@ -20,7 +20,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -28,23 +30,18 @@ import lombok.NonNull;
  *
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "employee")
 public class Employee {
+
 	@Id
 	@Column(name = "uuid", updatable = false, nullable = false)
+	@Builder.Default
 	private String uuid = UUID.randomUUID().toString();
 
 	@NonNull
 	private String name;
-
-	public Employee() {
-		this(null);
-	}
-
-	public Employee(String name) {
-		this.uuid = UUID.randomUUID().toString();
-		this.name = name;
-	}
 }

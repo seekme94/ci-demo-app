@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -34,29 +35,26 @@ import lombok.NonNull;
  *
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "event")
 public class Event {
+
 	@Id
 	@Column(name = "uuid", updatable = false, nullable = false)
 	@Builder.Default
 	private String uuid = UUID.randomUUID().toString();
+	
 	@NonNull
 	private Instant date;
+	
 	@NonNull
 	private String title;
+	
 	private String description;
+	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Employee> attendees;
-
-	public Event() {
-		this(null);
-	}
-
-	public Event(String title) {
-		this.uuid = UUID.randomUUID().toString();
-		this.title = title;
-	}
 }

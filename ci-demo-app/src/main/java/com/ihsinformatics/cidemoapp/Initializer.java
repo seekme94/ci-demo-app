@@ -58,7 +58,7 @@ public class Initializer implements CommandLineRunner {
 
 	private void createGroups() {
 		Stream.of("Developer", "Quality Assurance", "Administration", "Human Resource")
-				.forEach(name -> saveGroup(new Group(name)));
+				.forEach(name -> saveGroup(Group.builder().name(name).build()));
 	}
 
 	private Group saveGroup(Group group) {
@@ -70,8 +70,8 @@ public class Initializer implements CommandLineRunner {
 	}
 
 	private void createEmployees() {
-		Stream.of("Owais", "Naveed", "Tahira", "Omar", "Adnan", "Moiz", "Babar", "Irtiza", "Ahsan", "Shahid")
-				.forEach(name -> saveEmployee(new Employee(name)));
+		Stream.of("Owais", "Naveed", "Taha", "Shoaib", "Nabeel", "Moiz", "Yasir", "Irtiza", "Ahsan", "Shahid")
+				.forEach(name -> saveEmployee(Employee.builder().name(name).build()));
 	}
 
 	private Employee saveEmployee(Employee employee) {
@@ -84,8 +84,9 @@ public class Initializer implements CommandLineRunner {
 
 	private void createEvents() {
 		Group developer = service.getGroupByName("Developer");
-		Set<Employee> attendees = new HashSet<Employee>();
-		for (Employee employee : Arrays.asList(new Employee("Owais"), new Employee("Naveed"), new Employee("Tahira"))) {
+		Set<Employee> attendees = new HashSet<>();
+		for (Employee employee : Arrays.asList(Employee.builder().name("Owais").build(),
+				Employee.builder().name("Naveed").build(), Employee.builder().name("Tahira").build())) {
 			attendees.add(employee);
 		}
 		Event devEvent = Event.builder().title("Full Stack Reactive App")
@@ -95,19 +96,22 @@ public class Initializer implements CommandLineRunner {
 		service.saveEvent(devEvent);
 
 		Group qa = service.getGroupByName("Quality Assurance");
-		attendees = new HashSet<Employee>();
-		attendees.addAll(Arrays.asList(new Employee("Omar"), new Employee("Adnan")));
+		attendees = new HashSet<>();
+		attendees.addAll(
+				Arrays.asList(Employee.builder().name("Omar").build(), Employee.builder().name("Moiz").build()));
 		Event qaEvent = Event.builder().title("Mockito").description("Introduction to Mockito library for unit testing")
 				.date(Instant.parse("2018-05-15T09:30:00.000Z")).attendees(attendees).build();
 		qa.setEvents(Collections.singleton(qaEvent));
 		service.saveEvent(qaEvent);
 
 		Group admin = service.getGroupByName("Administration");
-		attendees = new HashSet<Employee>();
-		attendees.addAll(Arrays.asList(new Employee("Omar"), new Employee("Naveed"), new Employee("Babar"),
-				new Employee("Moiz"), new Employee("Irtiza"), new Employee("Ahsan"), new Employee("Shahid")));
-		Event adminEvent = Event.builder().title("Cricket Tournament 2018")
-				.date(Instant.parse("2018-07-28T10:00:00.000Z")).attendees(attendees).build();
+		attendees = new HashSet<>();
+		attendees.addAll(Arrays.asList(Employee.builder().name("Owais").build(),
+				Employee.builder().name("Naveed").build(), Employee.builder().name("Shujaat").build(),
+				Employee.builder().name("Imran").build(), Employee.builder().name("Irtiza").build(),
+				Employee.builder().name("Ahsan").build(), Employee.builder().name("Shahid").build()));
+		Event adminEvent = Event.builder().title("Cricket Tournament 2019")
+				.date(Instant.parse("2019-10-08T10:00:00.000Z")).attendees(attendees).build();
 		admin.setEvents(Collections.singleton(adminEvent));
 		service.saveEvent(adminEvent);
 	}
