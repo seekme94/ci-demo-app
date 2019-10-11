@@ -51,26 +51,26 @@ public class GroupController {
 	}
 
 	@GetMapping("/groups")
-	Collection<Group> groups() {
+	public Collection<Group> groups() {
 		return service.getGroups();
 	}
 
 	@GetMapping("/group/{uuid}")
-	ResponseEntity<Group> getGroup(@PathVariable String uuid) {
+	public ResponseEntity<Group> getGroup(@PathVariable String uuid) {
 		Optional<Group> group = Optional.of(service.getGroup(uuid));
 		return group.map(response -> ResponseEntity.ok().body(response))
 				.orElse(new ResponseEntity<Group>(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping("/group")
-	ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
+	public ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
 		log.info("Request to create group: {}", group);
 		Group result = service.saveGroup(group);
 		return ResponseEntity.created(new URI("/api/group/" + result.getUuid())).body(result);
 	}
 
 	@PutMapping("/group/{uuid}")
-	ResponseEntity<Group> updateGroup(@PathVariable String uuid, @Valid @RequestBody Group group) {
+	public ResponseEntity<Group> updateGroup(@PathVariable String uuid, @Valid @RequestBody Group group) {
 		group.setUuid(uuid);
 		log.info("Request to update group: {}", group);
 		Group result = service.saveGroup(group);
@@ -81,6 +81,6 @@ public class GroupController {
 	public ResponseEntity<?> deleteGroup(@PathVariable String uuid) {
 		log.info("Request to delete group: {}", uuid);
 		service.deleteGroup(service.getGroup(uuid));
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 }

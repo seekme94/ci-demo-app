@@ -53,19 +53,19 @@ public class EventController {
 	}
 
 	@GetMapping("/events")
-	Collection<Event> events() {
+	public Collection<Event> events() {
 		return service.getEvents();
 	}
 
 	@GetMapping("/event/{uuid}")
-	ResponseEntity<Event> getEvent(@PathVariable String uuid) {
+	public ResponseEntity<Event> getEvent(@PathVariable String uuid) {
 		Optional<Event> group = Optional.of(service.getEvent(uuid));
 		return group.map(response -> ResponseEntity.ok().body(response))
 				.orElse(new ResponseEntity<Event>(HttpStatus.NOT_FOUND));
 	}
 
 	@PostMapping("/event")
-	ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
+	public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) throws URISyntaxException {
 		log.info("Request to create event: {}", event);
 		Event result = service.saveEvent(event);
 		event.getAttendees().forEach(attendee -> saveEmployee(attendee));
@@ -81,7 +81,7 @@ public class EventController {
 	}
 
 	@PutMapping("/event/{uuid}")
-	ResponseEntity<Event> updateEvent(@PathVariable String uuid, @Valid @RequestBody Event event) {
+	public ResponseEntity<Event> updateEvent(@PathVariable String uuid, @Valid @RequestBody Event event) {
 		event.setUuid(uuid);
 		log.info("Request to update event: {}", event);
 		Event result = service.saveEvent(event);

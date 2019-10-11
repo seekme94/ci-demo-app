@@ -13,10 +13,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.cidemoapp.web;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -126,7 +128,7 @@ public class GroupControllerTest {
 		when(service.saveGroup(any(Group.class))).thenReturn(dev);
 		String content = gson.toJson(dev);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "group")
-			.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "group/" + dev.getUuid();
@@ -146,9 +148,18 @@ public class GroupControllerTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.cidemoapp.web.GroupController#deleteGroup(java.lang.Long)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldDeleteGroup() {
-		// TODO:
+	public void shouldDeleteGroup() throws Exception {
+		Group dev = Group.builder().name("Developers").build();
+		when(service.getGroup(any(String.class))).thenReturn(dev);
+		doNothing().when(service).deleteGroup(dev);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "group/{uuid}", dev.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(service, times(1)).getGroup(dev.getUuid());
+		verify(service, times(1)).deleteGroup(dev);
+		verifyNoMoreInteractions(service);
 	}
 }
